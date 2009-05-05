@@ -1,0 +1,7 @@
+= curly_mustache
+
+Description goes here.
+
+== Copyright
+
+Copyright (c) 2009 cjbottaro. See LICENSE for details.
