@@ -5,10 +5,10 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "curly_mustache"
-    gem.summary = %Q{TODO}
+    gem.summary = %Q{Like ActiveRecord, but uses key-value stores (Tokyo Cabinet, Redis, MemcacheDB, etc) instead of relational databases.}
     gem.email = "cjbottaro@alumni.cs.utexas.edu"
     gem.homepage = "http://github.com/cjbottaro/curly_mustache"
-    gem.authors = ["cjbottaro"]
+    gem.authors = ["Christopher J Bottaro"]
 
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end

@@ -1,7 +1,47 @@
-= curly_mustache
+= CurlyMustache
 
-Description goes here.
+Like ActiveRecord, but uses key-value stores (Memcached, Redis, Tokyo Cabinet, etc) instead of relational databases.
 
-== Copyright
+This is experimental and not used in any production environments yet.
 
-Copyright (c) 2009 cjbottaro. See LICENSE for details.
+http://github.com/cjbottaro/curly_mustache
+
+== Installation
+
+ sudo gem install --source http://gems.github.com cjbottaro-curly_mustache
+
+== Features
+
+* Basic ActiveRecord-like CRUD operations (create, destroy, find, save).
+* Simple associations.
+* Validations (TODO)
+* Callbacks (TODO)
+
+== Connecting
+
+  CurlyMustache::Base.establish_connection :adapter => :memcache,
+                                           :servers => %w[one.example.com:11211 two.example.com:11211],
+
+The +memcache+ adapter uses memcache-client[http://github.com/mperham/memcache-client].  Whatever other options you pass to +establish_connection+ will be passed to the constructor for it.
+
+== Usage
+
+  class User < CurlyMustache::Base
+    attribute :name,          :string
+    attribute :birthday_on,   :date
+    attribute :login_count,   :integer
+    attribute :last_login_at, :time
+  end
+  
+  user = User.create :name => "chris"
+  user.id                             # => "676cef021584904876af7c4b3e42afb5"
+  user.name                           # => "chris"
+  user.birthday_on = "03/11/1980"
+  user.save
+  
+  user = User.find(user.id)
+  puts user.birthday_on               # => "Tue, 11 Mar 1980"
+  user.birthday_on.class              # => Date
+  
+  user.destroy
+  User.find(user.id)                  # => exception CurlyMustache::RecordNotFound
