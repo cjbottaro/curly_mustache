@@ -81,7 +81,7 @@ module CurlyMustache
     end
     
     def attribute_type(name)
-      @owner.send(:attribute_type, name)
+      @owner.attribute_manager.type(name)
     end
     
   end

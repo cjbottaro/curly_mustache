@@ -1,4 +1,4 @@
-require 'association_manager'
+require 'curly_mustache/association_manager'
 
 module CurlyMustache
   module Associations

@@ -4,7 +4,7 @@ module CurlyMustache
   module Adapters
     class TokyoTyrant < Abstract
       
-      def initialize(config)
+      def read_config(config)
         config = config.reverse_merge :server => "localhost", :port => 1978
         @db = Rufus::Tokyo::Tyrant.new(config[:server], config[:port])
       end
@@ -33,6 +33,14 @@ module CurlyMustache
       
       def flush_db
         @db.clear
+      end
+      
+      def lock(key)
+        @db.putkeep(key, Time.now.to_s(:number))
+      end
+      
+      def unlock(key)
+        @db.delete(key).nil? == false
       end
       
       def raw

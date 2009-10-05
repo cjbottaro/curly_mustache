@@ -1,32 +1,26 @@
 module CurlyMustache
   class Base
-    include Attributes::Types
+    DEFAULT_LOCK_PREFIX = "lock"
+    
+    include Attributes
     include Crud
     include Associations
+    include Locking
     
     class_inheritable_accessor :connection
     class_inheritable_accessor :connection_config
-    class_inheritable_accessor :attribute_definitions
-    class_inheritable_accessor :typecaster
     
-    self.attribute_definitions = Attributes::Definitions.new
-    Attributes::Definer.new(self).define(:id, :integer)
-    
-    self.typecaster = Attributes::Typecaster.new
+    attribute :id, :string
     
     def self.establish_connection(config)
-      adapter_name = config[:adapter]
+      adapter_name = config[:adapter].to_s
       require "adapters/#{adapter_name}"
       self.connection_config = config
-      self.connection = "CurlyMustache::Adapters::#{adapter_name.camelize}".constantize.new(config)
-    end
-  
-    def self.define_attributes(&block)
-      yield(Attributes::Definer.new(self))
+      self.connection = "CurlyMustache::Adapters::#{adapter_name.camelize}".constantize.new(self, config)
     end
     
     def id
-      @attributes[:id]
+      @attributes["id"]
     end
     
     def new_record?
@@ -34,18 +28,7 @@ module CurlyMustache
     end
     
     def attributes
-      @attributes
-    end
-  
-    def read_attribute(name)
-      self.class.check_attribute_defined(name)
-      @attributes[name.to_sym]
-    end
-  
-    def write_attribute(name, value)
-      self.class.check_attribute_defined(name)
-      type = self.class.attribute_definitions[name][:type]
-      @attributes[name.to_sym] = typecast(:write, type, value)
+      @attributes.dup
     end
     
     def ==(other)
@@ -56,7 +39,11 @@ module CurlyMustache
   private
 
     def self.id_to_key(id)
-      "#{self.name.underscore}_#{id}"
+      if id.blank?
+        raise NoKeyError
+      else
+        "#{self}:#{id}"
+      end
     end
   
     def self.ids_to_keys(ids)
@@ -80,7 +67,6 @@ module CurlyMustache
     end
     
     def key
-      raise NoKeyError unless id
       self.class.id_to_key(id)
     end
     

@@ -50,7 +50,7 @@ module CurlyMustache
     end
     
     def fkey_type
-      @owner.send(:attribute_type, foreign_key)
+      @owner.attribute_manager.type(foreign_key)
     end
     
   end

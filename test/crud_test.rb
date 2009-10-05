@@ -1,14 +1,13 @@
-require File.dirname(__FILE__) + '/test_helper'
+require "test_helper"
 
 class User < CurlyMustache::Base
-  define_attributes do |attribute|
-    attribute.define :name,         :string
-    attribute.define :phone_number, :integer
-    attribute.define :balance,      :float
-    attribute.define :is_admin,     :boolean
-    attribute.define :created_at,   :datetime
-    attribute.define :updated_at,   :time
-  end
+  attribute :id,           :integer
+  attribute :name,         :string
+  attribute :phone_number, :integer
+  attribute :balance,      :float
+  attribute :is_admin,     :boolean
+  attribute :created_at,   :datetime
+  attribute :updated_at,   :time
 end
 
 class CrudTest < Test::Unit::TestCase

@@ -1,19 +1,15 @@
-require File.dirname(__FILE__) + '/test_helper'
+require "test_helper"
 
 class Account < CurlyMustache::Base
-  define_attributes do |attribute|
-    attribute.define :name,       :string
-    attribute.define :user_ids,   :array
-  end
+  attribute :name,       :string
+  attribute :user_ids,   :array
   
   association :users
 end
 
 class User < CurlyMustache::Base
-  define_attributes do |attribute|
-    attribute.define :account_id,   :integer
-    attribute.define :name,         :string
-  end
+  attribute :account_id,   :integer
+  attribute :name,         :string
   
   association :account, :arity => :one
 end

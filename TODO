@@ -1,0 +1,1 @@
+Adapters::Redis#initialize needs to be changed to #read_config.  Also need to implement #lock and #unlock.

@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Christopher J Bottaro"]
-  s.date = %q{2009-06-12}
+  s.date = %q{2009-06-22}
   s.email = %q{cjbottaro@alumni.cs.utexas.edu}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -24,10 +24,9 @@ Gem::Specification.new do |s|
     "lib/association_collection.rb",
     "lib/association_manager.rb",
     "lib/associations.rb",
-    "lib/attributes/definer.rb",
-    "lib/attributes/definitions.rb",
-    "lib/attributes/typecaster.rb",
-    "lib/attributes/types.rb",
+    "lib/attributes.rb",
+    "lib/attributes_manager.rb",
+    "lib/attributes_typecaster.rb",
     "lib/base.rb",
     "lib/crud.rb",
     "lib/curly_mustache.rb",
@@ -35,6 +34,7 @@ Gem::Specification.new do |s|
     "lib/helpers.rb",
     "test/associations_test.rb",
     "test/crud_test.rb",
+    "test/tc_table_test.rb",
     "test/test_helper.rb"
   ]
   s.has_rdoc = true
@@ -46,6 +46,7 @@ Gem::Specification.new do |s|
   s.test_files = [
     "test/associations_test.rb",
     "test/crud_test.rb",
+    "test/tc_table_test.rb",
     "test/test_helper.rb"
   ]
 

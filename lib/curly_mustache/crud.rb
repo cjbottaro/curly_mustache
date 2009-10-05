@@ -30,6 +30,11 @@ module CurlyMustache
         end
       end
       
+      def find_all_by_id(*ids)
+        ids = [ids].flatten
+        find_many(ids, :raise => false)
+      end
+      
       def delete_all(*ids)
         ids_to_keys(ids).each{ |key| connection.delete(key) }
       end
@@ -46,10 +51,11 @@ module CurlyMustache
         returning(new){ |record| record.send(:load, data) }
       end
       
-      def find_many(ids)
+      def find_many(ids, options = {})
+        options = options.reverse_merge :raise => true
         keys = ids_to_keys(ids)
         datas = connection.mget(keys)
-        if keys.length != datas.length
+        if options[:raise] && keys.length != datas.length
           raise RecordNotFound, "Couldn't find all #{self.name} with IDs (#{ids.join(',')}) (found #{datas.length} results, but was looking for #{ids.length})"
         else
           datas.collect{ |data| returning(new){ |record| record.send(:load, data) } }
@@ -91,7 +97,7 @@ module CurlyMustache
     
       def set_id
         if id.blank?
-          @attributes[:id] = self.class.generate_id
+          @attributes["id"] = self.class.generate_id
         else
           true
         end
