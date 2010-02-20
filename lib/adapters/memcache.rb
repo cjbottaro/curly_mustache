@@ -10,18 +10,18 @@ module CurlyMustache
       end
       
       def get(key)
-        (data = @cache.get(key)) and marshal_load(data)
+        @cache.get(key)
       end
       
       def mget(keys)
         keys = keys.collect(&:to_s)
         results = @cache.get_multi(*keys)
-        results = results.collect{ |k, v| [k, marshal_load(v)] }
+        results = results.collect{ |k, v| [k, v] }
         results.sort.collect{ |result| result[1] }
       end
       
       def put(key, value)
-        @cache.set(key, marshal_dump(value))
+        @cache.set(key, value)
       end
       
       def delete(key)
@@ -39,6 +39,10 @@ module CurlyMustache
       
       def unlock(key)
         delete(key) == "DELETED\r\n"
+      end
+      
+      def locked?(key)
+        !!@cache.get(key)
       end
       
     end

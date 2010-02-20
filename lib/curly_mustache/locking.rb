@@ -74,6 +74,10 @@ module CurlyMustache
         self.class.unlock(self.id)
       end
       
+      def locked?
+        connection.locked?(self.class.lock_key(id))
+      end
+      
     end
   end
 end
