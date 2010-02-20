@@ -12,7 +12,7 @@ module CurlyMustache
     
     extend ActiveModel::Callbacks
     
-    define_model_callbacks :create, :destroy, :save, :update
+    define_model_callbacks :create, :destroy, :save, :update, :only => [:before, :after]
     define_model_callbacks :find, :only => :after
     
     class_inheritable_accessor :connection

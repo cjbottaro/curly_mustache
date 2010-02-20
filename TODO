@@ -1,5 +1,2 @@
-* Move get/put out of connection and into model class so they have direct access to serializers and we don't have to do that nasty hack when the connection is inherited to a derived class.
-
-* Make tests for callbacks.
-
+* Add validation support.
 * Don't include locking by default.  Add a method like lockable! to Base.
