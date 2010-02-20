@@ -10,7 +10,6 @@ require "digest"
 require "ostruct"
 
 require "adapters/abstract"
-require "curly_mustache/helpers"
 require "curly_mustache/errors"
 require "curly_mustache/connection"
 require "curly_mustache/attributes"

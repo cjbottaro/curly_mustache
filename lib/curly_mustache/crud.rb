@@ -61,7 +61,7 @@ module CurlyMustache
       end
       
       def find_many(ids, should_raise = false)
-        hashes = connection.mget(ids_to_keys(ids))
+        hashes = mget(ids_to_keys(ids))
         if should_raise and ids.length != hashes.length
           raise RecordNotFound, find_many_error_message(ids, hashes)
         else
@@ -144,7 +144,7 @@ module CurlyMustache
           else
             _id, _key = id, key
           end
-          attributes = connection.get(_key) || raise(RecordNotFound, "Couldn't find #{self.class.name} with ID=#{_id}")
+          attributes = get(_key) || raise(RecordNotFound, "Couldn't find #{self.class.name} with ID=#{_id}")
           set_attributes(attributes)
         end
         
@@ -162,7 +162,7 @@ module CurlyMustache
       alias_method_chain :read, :callbacks
       
       def update
-        connection.put(key, attributes)
+        put(key, attributes)
         @new_record = false
       end
       

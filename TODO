@@ -1,1 +1,5 @@
-Adapters::Redis#initialize needs to be changed to #read_config.  Also need to implement #lock and #unlock.
+* Move get/put out of connection and into model class so they have direct access to serializers and we don't have to do that nasty hack when the connection is inherited to a derived class.
+
+* Make tests for callbacks.
+
+* Don't include locking by default.  Add a method like lockable! to Base.
