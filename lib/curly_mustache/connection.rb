@@ -14,7 +14,7 @@ module CurlyMustache
       def establish_connection(config)
         adapter_name = config[:adapter].to_s
         require "adapters/#{adapter_name}"
-        adapter = "CurlyMustache::Adapters::#{adapter_name.camelize}".constantize.new(self, config)
+        adapter = "CurlyMustache::Adapters::#{adapter_name.camelize}".constantize.new(config)
         self.connection = adapter
       end
       

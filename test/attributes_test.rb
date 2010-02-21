@@ -65,4 +65,32 @@ class AttributesTest < ActiveSupport::TestCase
     assert_equal "", account.name
   end
   
+  def test_dirty
+    user = User.create(:name => "chris")
+    assert_equal false, user.changed?
+    assert_equal false, user.name_changed?
+    
+    user.name = "callie"
+    assert_equal true, user.changed?
+    assert_equal true, user.name_changed?
+    assert_equal({ "name" => ["chris", "callie"] }, user.changes)
+    
+    user.reset_name!
+    assert_equal false, user.changed?
+    assert_equal false, user.name_changed?
+    assert_equal({}, user.changes)
+    
+    user.name = "callie"
+    user.phone_number = 5123334444
+    assert_equal true, user.changed?
+    assert_equal true, user.name_changed?
+    assert_equal true, user.phone_number_changed?
+    assert_equal({ "name" => ["chris", "callie"], "phone_number" => [nil, 5123334444] }, user.changes)
+    user.reset_phone_number!
+    assert_equal true, user.changed?
+    assert_equal true, user.name_changed?
+    assert_equal false, user.phone_number_changed?
+    assert_equal({ "name" => ["chris", "callie"] }, user.changes)
+  end
+  
 end

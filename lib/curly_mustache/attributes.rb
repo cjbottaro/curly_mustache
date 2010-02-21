@@ -13,7 +13,7 @@ module CurlyMustache
         class_inheritable_accessor :attribute_manager
         class_inheritable_accessor :allow_settable_id
       end
-      mod.attribute_manager = Manager.new(mod)
+      mod.attribute_manager = Manager.new
       mod.send(:extend,  ClassMethods)
       mod.send(:include, InstanceMethods)
     end
@@ -21,7 +21,7 @@ module CurlyMustache
     module ClassMethods
       
       def attribute(name, type, options = {})
-        attribute_manager.define(name, type, options)
+        attribute_manager.define(self, name, type, options)
       end
       
       def attributes
@@ -53,6 +53,7 @@ module CurlyMustache
       end
       
       def write_attribute(name, value)
+        send("#{name}_will_change!") # ActiveModel::Dirty
         @attributes[name.to_s] = value
       end
       

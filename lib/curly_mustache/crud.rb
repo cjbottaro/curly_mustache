@@ -183,6 +183,10 @@ module CurlyMustache
       def update
         put(key, attributes)
         @new_record = false
+        
+        # ActiveModel::Dirty
+        previously_changed_attributes.replace(changes)
+        changed_attributes.clear
       end
       
       def update_with_callbacks

@@ -5,11 +5,11 @@ class BadAdapter < CurlyMustache::Adapters::Abstract; end
 class AttributesTest < ActiveSupport::TestCase
   
   def test_not_implemented
-    assert_raise(CurlyMustache::NotImplementedError){ BadAdapter.new(nil, nil) }
+    assert_raise(CurlyMustache::NotImplementedError){ BadAdapter.new(nil) }
     BadAdapter.class_eval do
       def read_config(config); nil; end
     end
-    adapter = BadAdapter.new(nil, nil)
+    adapter = BadAdapter.new(nil)
     assert_raise(CurlyMustache::NotImplementedError){ adapter.get(1) }
     assert_raise(CurlyMustache::NotImplementedError){ adapter.mget([1, 2]) }
     assert_raise(CurlyMustache::NotImplementedError){ adapter.put(1, "one") }

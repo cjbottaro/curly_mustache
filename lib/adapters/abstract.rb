@@ -2,8 +2,7 @@ module CurlyMustache
   module Adapters
     class Abstract
       
-      def initialize(klass, config)
-        @config, @class = config, klass
+      def initialize(config)
         read_config(config)
       end
       

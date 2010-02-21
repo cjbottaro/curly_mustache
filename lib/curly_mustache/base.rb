@@ -12,6 +12,7 @@ module CurlyMustache
     
     extend ActiveModel::Callbacks
     include ActiveModel::Validations
+    include ActiveModel::Dirty
     
     define_model_callbacks :create, :destroy, :save, :update, :validation, :validation_on_create, :validation_on_update, :only => [:before, :after]
     define_model_callbacks :find, :only => :after
