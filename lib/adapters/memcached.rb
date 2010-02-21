@@ -2,7 +2,7 @@ require 'memcache'
 
 module CurlyMustache
   module Adapters
-    class Memcache < Abstract
+    class Memcached < Abstract
       
       def read_config(config)
         config = config.reverse_merge :servers => "localhost:11211"

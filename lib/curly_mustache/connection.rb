@@ -3,7 +3,7 @@ module CurlyMustache
     
     def self.included(mod)
       mod.class_eval do
-        class_inheritable_accessor :connection
+        class_inheritable_accessor :_connection
       end
       mod.send(:extend,  ClassMethods)
       mod.send(:include, InstanceMethods)
@@ -15,7 +15,12 @@ module CurlyMustache
         adapter_name = config[:adapter].to_s
         require "adapters/#{adapter_name}"
         adapter = "CurlyMustache::Adapters::#{adapter_name.camelize}".constantize.new(config)
-        self.connection = adapter
+        self._connection = adapter
+      end
+      
+      def connection
+        _connection.set_class(self)
+        _connection
       end
       
       def get(key)
@@ -37,6 +42,10 @@ module CurlyMustache
       def get(key); self.class.get(key); end
       def put(key, value); self.class.put(key, value); end
       def mget(keys); self.class.mget(keys); end
+      
+      def connection
+        self.class.connection
+      end
       
     end
     

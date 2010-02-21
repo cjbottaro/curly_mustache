@@ -54,7 +54,7 @@ module CurlyMustache
       end
       
       def lock_prefix
-        Base::DEFAULT_LOCK_PREFIX
+        "lock"
       end
       
     end

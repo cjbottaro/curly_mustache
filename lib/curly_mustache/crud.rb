@@ -206,8 +206,8 @@ module CurlyMustache
       alias_method_chain :update, :callbacks
       
       def delete
-        self.class.delete_all(id)
-        self.freeze
+        connection.delete(key)
+        freeze
       end
       
       def delete_with_callbacks

@@ -1,2 +1,0 @@
-* Add validation support.
-* Don't include locking by default.  Add a method like lockable! to Base.

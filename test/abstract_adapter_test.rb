@@ -2,7 +2,7 @@ require "test_helper"
 
 class BadAdapter < CurlyMustache::Adapters::Abstract; end
 
-class AttributesTest < ActiveSupport::TestCase
+class AbstractAdapterTest < ActiveSupport::TestCase
   
   def test_not_implemented
     assert_raise(CurlyMustache::NotImplementedError){ BadAdapter.new(nil) }

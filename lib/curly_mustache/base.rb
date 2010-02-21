@@ -2,13 +2,11 @@ require "curly_mustache/default_types"
 
 module CurlyMustache
   class Base
-    DEFAULT_LOCK_PREFIX = "lock"
     
     include Connection
     include Attributes
     include Crud
     include Serialization
-    include Locking
     
     extend ActiveModel::Callbacks
     include ActiveModel::Validations

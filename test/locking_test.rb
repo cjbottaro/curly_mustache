@@ -1,10 +1,19 @@
 require "test_helper"
 
-class LockingTest < Test::Unit::TestCase
+unless [:cassandra].include?(CurlyMustache::Base.connection.adapter)
+  require "curly_mustache/locking"
+  CurlyMustache::Base.send(:include, CurlyMustache::Locking)
+end
+
+class LockingTest < ActiveSupport::TestCase
   
   def setup
-    CurlyMustache::Base.connection.flush_db
-    @account = Account.create :name => "chris"
+    if CurlyMustache::Base.method_defined?(:lock)
+      CurlyMustache::Base.connection.flush_db
+      @account = Account.create :name => "chris"
+    else
+      disable_tests
+    end
   end
   
   def test_lock_unlock

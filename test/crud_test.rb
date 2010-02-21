@@ -12,8 +12,8 @@ class CrudTest < ActiveSupport::TestCase
       :phone_number => 5128258325,
       :balance      => 1.01,
       :is_admin     => true,
-      :created_at   => Time.parse("2009-04-23 22:09:50.936751 -05:00"),
-      :updated_at   => Time.parse("2009-04-23 22:09:50.936751 -05:00") }.dup
+      :created_at   => Time.parse("2009-04-23 22:09:50 -05:00"),
+      :updated_at   => Time.parse("2009-04-23 22:09:50 -05:00") }.dup
   end
   
   def assert_attributes(record, attributes = nil)
