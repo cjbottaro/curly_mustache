@@ -53,4 +53,16 @@ class AttributesTest < ActiveSupport::TestCase
     assert_equal nil, account.created_at
   end
   
+  def test_set_to_nil
+    user = User.new(:phone_number => 5123334444)
+    assert_equal 5123334444, user.phone_number
+    user.phone_number = nil
+    assert_nil user.phone_number
+    
+    account = Account.new(:name => "blah")
+    assert_equal "blah", account.name
+    account.name = nil
+    assert_equal "", account.name
+  end
+  
 end
