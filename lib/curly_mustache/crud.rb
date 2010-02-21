@@ -16,6 +16,12 @@ module CurlyMustache
         end
       end
       
+      def create!(attributes = {})
+        returning(create(attributes)) do |record|
+          record.errors.count > 0 and raise(RecordInvalid, "Validation failed: #{record.errors.full_messages.join(', ')}")
+        end
+      end
+      
       def find(*ids)
         ids = [ids].flatten
         if ids.length == 1
@@ -95,7 +101,14 @@ module CurlyMustache
       end
       
       def save
-        returning(self){ new_record? ? create : update }
+        new_record? ? create : update
+        (errors.count > 0) ? false : self
+      end
+      
+      def save!
+        returning(save) do
+          errors.count > 0 and raise(RecordInvalid, "Validation failed: #{errors.full_messages.join(', ')}")
+        end
       end
       
       def destroy
@@ -122,6 +135,12 @@ module CurlyMustache
       end
       
       def create_with_callbacks
+        _run_validation_on_create_callbacks do
+          _run_validation_callbacks do
+            valid? or return
+          end
+        end
+          
         _run_create_callbacks do
           _run_save_callbacks do
             create_without_callbacks
@@ -167,6 +186,12 @@ module CurlyMustache
       end
       
       def update_with_callbacks
+        _run_validation_on_update_callbacks do
+          _run_validation_callbacks do
+            valid? or return
+          end
+        end
+        
         _run_update_callbacks do
           _run_save_callbacks do
             update_without_callbacks

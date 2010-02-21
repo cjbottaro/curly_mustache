@@ -3,22 +3,29 @@ class Account < CurlyMustache::Base
   attribute :created_at, :time
   attribute :updated_at, :time
   
-  CALLBACKS = %w[before_create after_create before_save after_save before_update after_update before_destroy after_destroy after_find]
+  CALLBACKS = %w[before_create after_create
+                 before_save after_save
+                 before_update after_update
+                 before_destroy after_destroy
+                 before_validation after_validation
+                 before_validation_on_create after_validation_on_create
+                 before_validation_on_update after_validation_on_update
+                 after_find]
   
-  cattr_reader :callback_counts
+  attr_accessor :callbacks_made
   
-  def self.reset_callback_counts
-    @@callback_counts = CALLBACKS.inject({}){ |memo, callback_name| memo[callback_name.to_sym] = 0; memo }
-  end
-  
+  # This just defines methods for each callback that simply records in #callbacks_made that
+  # the callback was called.
   CALLBACKS.each do |callback_name|
     class_eval <<-end_eval
       #{callback_name} :#{callback_name}_cb
       def #{callback_name}_cb
-        @@callback_counts[:#{callback_name}] += 1
+        @callbacks_made ||= []
+        @callbacks_made << :#{callback_name}
       end
     end_eval
   end
   
-  reset_callback_counts
+  validates_presence_of :name
+  
 end

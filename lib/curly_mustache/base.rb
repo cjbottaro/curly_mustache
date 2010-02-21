@@ -11,12 +11,10 @@ module CurlyMustache
     include Locking
     
     extend ActiveModel::Callbacks
+    include ActiveModel::Validations
     
-    define_model_callbacks :create, :destroy, :save, :update, :only => [:before, :after]
+    define_model_callbacks :create, :destroy, :save, :update, :validation, :validation_on_create, :validation_on_update, :only => [:before, :after]
     define_model_callbacks :find, :only => :after
-    
-    class_inheritable_accessor :connection
-    class_inheritable_accessor :connection_config
     
     # Set this to true if you want to set your own ids as opposed to having CurlyMustache
     # automatically generate them for you.  Ex:

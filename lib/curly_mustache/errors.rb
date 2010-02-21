@@ -10,5 +10,5 @@ module CurlyMustache
     end
   end
   class RecordNotFound < RuntimeError; end
-  class ValidationError < RuntimeError; end
+  class RecordInvalid < RuntimeError; end
 end

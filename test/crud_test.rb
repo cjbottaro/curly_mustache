@@ -131,7 +131,7 @@ class CrudTest < ActiveSupport::TestCase
     
     # Strange reload bug where it sets the id to 0.
     # Ahh, this was happening because attributes_manager wasn't inheriting properly.
-    account = Account.create
+    account = Account.create(:name => "blah")
     assert_equal 32, (account_id = account.id).length
     account.reload
     assert_equal account_id, account.id
