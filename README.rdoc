@@ -69,15 +69,38 @@ The +memcache+ adapter uses memcache-client[http://github.com/mperham/memcache-c
 
 Five types are defined for you:  <tt>string</tt>, <tt>integer</tt>, <tt>float</tt>, <tt>time</tt>, <tt>boolean</tt>.  It is easy to define new types or modify existing ones.  See {Read more}[link:/classes/CurlyMustache/Attributes/Types.html]
 
+== Callbacks
+
+The following callbacks are available:
+ before_validation_on_create    after_validation_on_create
+ before_validation_on_update    after_validation_on_update
+ before_validation              after_validation
+ before_create                  after_create
+ before_update                  after_update
+ before_save                    after_save
+ before_destroy                 after_destroy
+                                after_find
+
 == Adapters
 
 You can use the {Memcached adapter}[link:/classes/CurlyMustache/Adapters/Memcached.html] with any data stores that speak memcached.  There is also the {Cassandra adapter}[link:/classes/CurlyMustache/Adapters/Cassandra.html] and soon to be SDB adapter and Tokyo Tyrant table type adapter.
 
 You can create your own adapters by subclassing CurlyMustache::Adapters::Abstract and implementing a few methods.
 
-== Serializers
+== Serializing
 
-You can add a layer of serialization before the adapters send the data off to the data store or read from the data store.  This is useful if your model's attributes don't map cleanly to the data store.  For example, if you are using a data store that only supports key/blob (no notion of columns or attributes), then you can create a serializer that serializes all your model's attributes into a blob for the adapter.  {Read more}[link:/classes/CurlyMustache/Serialization.html].
+If you need to serialize your model's attributes before sending them to the adapter, it's done by overriding {send_attributes}[link:/classes/CurlyMustache/Connection/InstanceMethods.html#M000078].  For deserialization, override {recv_attributes}[/classes/CurlyMustache/Connection/InstanceMethods.html#M000079].
+
+This is how data flows in and out of the data store...
+
+ ---------------------     --------------------------     ---------------      --------------
+ | record.attributes | ==> | record.send_attributes | ==> | adapter.put |  ==> | data store |
+ ---------------------     --------------------------     ---------------      --------------
+
+ ---------------------     --------------------------     ---------------      --------------
+ | record.attributes | <== | record.recv_attributes | <== | adapter.get |  <== | data store |
+ ---------------------     --------------------------     ---------------      --------------
+
 
 == Author
 Christopher J. Bottaro - {cjbottaro}[http://github.com/cjbottaro]

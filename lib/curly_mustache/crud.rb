@@ -2,13 +2,14 @@ module CurlyMustache
   
   module Crud
     
-    def self.included(mod)
+    def self.included(mod) # :nodoc:
       mod.send(:extend,  ClassMethods)
       mod.send(:include, InstanceMethods)
     end
     
     module ClassMethods
       
+      # Create a record and save it to the data store.  Returns a record with errors if validation fails.
       def create(attributes = {})
         returning(new) do |record|
           record.attributes = attributes
@@ -16,12 +17,14 @@ module CurlyMustache
         end
       end
       
+      # Create a record and save it to the data store.  Raises RecordInvalid if validation fails.
       def create!(attributes = {})
         returning(create(attributes)) do |record|
           record.errors.count > 0 and raise(RecordInvalid, "Validation failed: #{record.errors.full_messages.join(', ')}")
         end
       end
       
+      # Find by id.  Can take multiple ids.  Raise RecordNotFound if not all ids are found.
       def find(*ids)
         ids = [ids].flatten
         if ids.length == 1
@@ -31,21 +34,27 @@ module CurlyMustache
         end
       end
       
+      # Find multiple records by ids.  May return an array with less records
+      # than ids asked for or an empty array.
       def find_all_by_id(*ids)
         ids = [ids].flatten
         find_many(ids)
       end
       
+      # Find a single record by id.  Returns nil if record is not found.
       def find_by_id(id)
         find_one(id)
       rescue RecordNotFound
         nil
       end
       
+      # Deletes records by ids without instantiating them first, thus the
+      # *_destroy callbacks won't be invoked.
       def delete_all(*ids)
         ids_to_keys(ids).each{ |key| connection.delete(key) }
       end
       
+      # Instantiate records then calls destroy on them.
       def destroy_all(*ids)
         find(ids).each{ |record| record.destroy }
       end
@@ -90,31 +99,37 @@ module CurlyMustache
     
     module InstanceMethods
       
+      # Make a new record in memory with supplied attributes.
       def initialize(attributes = {})
         @attributes = {}
         @new_record = true
         self.attributes = attributes
       end
       
+      # Returns true if the record has been saved yet.
       def new_record?
         !!@new_record
       end
       
+      # Reload the record from the data store, overwriting any attribute changes.
       def reload
         returning(self){ read }
       end
       
+      # Save the record to the data store.  Returns false if validation fails.
       def save
         new_record? ? create : update
         (errors.count > 0) ? false : self
       end
       
+      # Save the record to the data store.  Raises RecordInvalid if validation fails.
       def save!
         returning(save) do
           errors.count > 0 and raise(RecordInvalid, "Validation failed: #{errors.full_messages.join(', ')}")
         end
       end
       
+      # Delete a record from the data store, invoking the *_destroy callbacks.
       def destroy
         delete
       end

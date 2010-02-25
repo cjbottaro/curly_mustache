@@ -4,7 +4,7 @@ module CurlyMustache
   # You are probably looking for {establish_connection}[link:/classes/CurlyMustache/Connection/ClassMethods.html#M000084].
   module Connection
     
-    def self.included(mod)
+    def self.included(mod) # :nodoc:
       mod.class_eval do
         class_inheritable_accessor :_connection
       end
@@ -26,7 +26,7 @@ module CurlyMustache
         self._connection = Adapters.get(config[:adapter]).new(config)
       end
       
-      def connection
+      def connection # :nodoc:
         _connection.model_class = self
         _connection
       end
@@ -35,16 +35,28 @@ module CurlyMustache
     
     module InstanceMethods
       
-      def connection
-        self.class.connection
-      end
-      
+      # Override this method if you want to massage the data that is sent to the adapter.
+      #
+      # +attributes+ is the same as <tt>self.attributes</tt>.
+      #
+      # Return value will be sent to the adapter's +put+ method.
       def send_attributes(attributes)
         attributes
       end
       
+      # Override this method if you want to massage the data that is received from the adapter.
+      #
+      # +attributes+ is what is returned from the adapter's +get+ method.
+      #
+      # Return value will be assigned to <tt>self.attributes</tt>.
       def recv_attributes(attributes)
         attributes
+      end
+      
+    private
+      
+      def connection # :nodoc:
+        self.class.connection
       end
       
     end
