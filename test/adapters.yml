@@ -2,5 +2,5 @@ memcached:
   servers: localhost:11211
 
 cassandra:
-  server: 127.0.0.1:9160
+  servers: 127.0.0.1:9160
   keyspace: CurlyMustache

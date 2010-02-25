@@ -1,47 +1,83 @@
 = CurlyMustache
 
-Like ActiveRecord, but uses key-value stores (Memcached, Redis, Tokyo Cabinet, etc) instead of relational databases.
-
-This is experimental and not used in any production environments yet.
+ActiveModel implementation for various data stores.  In other words, it provides an ActiveRecord like library for data stores other than relational databases.  Out of the box, it works with Memcached, Redis, Tokyo Tyrant, Cassandra and Amazon SDB.
 
 http://github.com/cjbottaro/curly_mustache
 
 == Installation
 
- sudo gem install --source http://gems.github.com cjbottaro-curly_mustache
+ sudo gem install curly_mustache
+
+CurlyMustache depends on activemodel-3.0.0beta1 and activesupport-3.0.0beta1 which are unfortunately in a state of great flux and are thus very buggy.  I'm hosting patched versions that are known to work with CurlyMustache here:
+
+{activesupport-3.0.0beta1}[http://dl.dropbox.com/u/167916/stochasticbytes/activesupport-3.0.0.beta1.gem]
+
+{activemodel-3.0.0beta1}[http://dl.dropbox.com/u/167916/stochasticbytes/activemodel-3.0.0.beta1.gem]
 
 == Features
 
-* Basic ActiveRecord-like CRUD operations (create, destroy, find, save).
-* Simple associations.
-* Validations (TODO)
-* Callbacks (TODO)
+* Basic ActiveRecord-like CRUD operations (new, create, destroy, find, save).
+* Validations (via ActiveModel).
+* Callbacks (via ActiveModel).
+* Attribute change tracking (via ActiveModel::Dirty).
+* Easy creation of new types.
+* Easy creation of new adapters (to connect to different data stores).
+* 100% rcov(erage)!
 
-== Connecting
+== Quickstart
 
-  CurlyMustache::Base.establish_connection :adapter => :memcache,
-                                           :servers => %w[one.example.com:11211 two.example.com:11211],
+If your data store speaks Memcached, then you just need to use the <tt>:memcached</tt> adapter.
+
+  CurlyMustache::Base.establish_connection :adapter => :memcached,
+                                           :servers => %w[one.example.com:11211 two.example.com:11211]
+                                           
+  class User < CurlyMustache::Base
+    attribute :name,          :string
+    attribute :login_count,   :integer
+    attribute :birthday,      :time
+    
+    validates_presence_of :name
+    after_validation :capitalize_name
+    
+    def capitalize_name
+      self.name = name.capitalize
+    end
+  end
+  
+  user = User.new :name => "chris"
+  user.new_record?                      # => true
+  user.id                               # => nil
+  user.name                             # => "chris"
+  user.birthday                         # => nil
+  user.birthday = "03/11/1980"
+  user.birthday_changed?                # => true
+  user.birthday.class                   # => Time
+  user.birthday                         # => "Tue Mar 11 00:00:00 -0600 1980"
+  user.save!
+  user.id                               # => "676cef021584904876af7c4b3e42afb5"
+  
+  user = User.find(user.id)
+  user.name                             # => "Chris"
+  
+  user.destroy
+  User.find(user.id)                    # => CurlyMustache::RecordNotFound
+end
 
 The +memcache+ adapter uses memcache-client[http://github.com/mperham/memcache-client].  Whatever other options you pass to +establish_connection+ will be passed to the constructor for it.
 
-== Usage
+== Types
 
-  class User < CurlyMustache::Base
-    attribute :name,          :string
-    attribute :birthday_on,   :date
-    attribute :login_count,   :integer
-    attribute :last_login_at, :time
-  end
-  
-  user = User.create :name => "chris"
-  user.id                             # => "676cef021584904876af7c4b3e42afb5"
-  user.name                           # => "chris"
-  user.birthday_on = "03/11/1980"
-  user.save
-  
-  user = User.find(user.id)
-  puts user.birthday_on               # => "Tue, 11 Mar 1980"
-  user.birthday_on.class              # => Date
-  
-  user.destroy
-  User.find(user.id)                  # => exception CurlyMustache::RecordNotFound
+Five types are defined for you:  <tt>string</tt>, <tt>integer</tt>, <tt>float</tt>, <tt>time</tt>, <tt>boolean</tt>.  It is easy to define new types or modify existing ones.  See {Read more}[link:/classes/CurlyMustache/Attributes/Types.html]
+
+== Adapters
+
+You can use the {Memcached adapter}[link:/classes/CurlyMustache/Adapters/Memcached.html] with any data stores that speak memcached.  There is also the {Cassandra adapter}[link:/classes/CurlyMustache/Adapters/Cassandra.html] and soon to be SDB adapter and Tokyo Tyrant table type adapter.
+
+You can create your own adapters by subclassing CurlyMustache::Adapters::Abstract and implementing a few methods.
+
+== Serializers
+
+You can add a layer of serialization before the adapters send the data off to the data store or read from the data store.  This is useful if your model's attributes don't map cleanly to the data store.  For example, if you are using a data store that only supports key/blob (no notion of columns or attributes), then you can create a serializer that serializes all your model's attributes into a blob for the adapter.  {Read more}[link:/classes/CurlyMustache/Serialization.html].
+
+== Author
+Christopher J. Bottaro - {cjbottaro}[http://github.com/cjbottaro]

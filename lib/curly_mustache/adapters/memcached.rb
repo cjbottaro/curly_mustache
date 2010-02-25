@@ -2,9 +2,15 @@ require 'memcache'
 
 module CurlyMustache
   module Adapters
+    # You can use this adapter with any data store that speaks Memcached.  The adapter uses
+    # {memcache-client}[http://github.com/mperham/memcache-client].  The <tt>:servers</tt> key in
+    # the hash passed to CurlyMustache::Base#establish_connection will be the first argument to
+    # <tt>MemCache.new</tt> and entire hash will be passed as the second argument.
     class Memcached < Abstract
       
-      def read_config(config)
+      # <tt>config[:servers]</tt> will be passed as the first argument to <tt>MemCache.new</tt> and
+      # <tt>config</tt> itself will be passed as the second argument.
+      def initialize(config)
         config = config.reverse_merge :servers => "localhost:11211"
         @cache = MemCache.new(config[:servers], config)
       end

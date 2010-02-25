@@ -2,8 +2,6 @@ require 'rubygems'
 require 'test/unit'
 require 'mocha'
 
-$LOAD_PATH.unshift "lib"
-
 require 'curly_mustache'
 
 # This has to go before the model definitions or class_inheritable_accessor won't inherit.
@@ -13,8 +11,8 @@ CurlyMustache::Base.establish_connection(configs[adapter].merge(:adapter => adap
 
 # This also has to go before the model definitions or class_inheritable_accessor won't inherit.
 class CurlyMustache::Base
-  if connection.class.name.include?("Cassandra")
-    serializer.in do |attributes|
+  if connection.adapter_name == :cassandra
+    def send_attributes(attributes)
       attributes.inject({}) do |memo, (k, v)|
         memo[k] = String(v)
         memo

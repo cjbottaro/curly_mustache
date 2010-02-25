@@ -6,7 +6,6 @@ module CurlyMustache
     include Connection
     include Attributes
     include Crud
-    include Serialization
     
     extend ActiveModel::Callbacks
     include ActiveModel::Validations

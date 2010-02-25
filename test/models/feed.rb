@@ -2,12 +2,12 @@ class Feed < CurlyMustache::Base
   attribute :title, :string
   attribute :url, :string
   
-  serializer.in do |attributes|
+  def send_attributes(attributes)
     { "BLOB" => Marshal.dump(attributes) }
   end
   
-  serializer.out do |data|
-    Marshal.load(data["BLOB"])
+  def recv_attributes(attributes)
+    Marshal.load(attributes["BLOB"])
   end
   
 end

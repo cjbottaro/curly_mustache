@@ -5,7 +5,7 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "curly_mustache"
-    gem.summary = %Q{Like ActiveRecord, but uses key-value stores (Tokyo Cabinet, Redis, MemcacheDB, etc) instead of relational databases.}
+    gem.summary = %Q{ActiveModel implemention that provides an ActiveRecord-like interface for various data stores.}
     gem.email = "cjbottaro@alumni.cs.utexas.edu"
     gem.homepage = "http://github.com/cjbottaro/curly_mustache"
     gem.authors = ["Christopher J Bottaro"]
@@ -26,7 +26,7 @@ end
 begin
   require 'rcov/rcovtask'
   Rcov::RcovTask.new do |test|
-    test.libs << 'test'
+    test.libs << 'lib' << 'test'
     test.pattern = 'test/**/*_test.rb'
     test.verbose = true
   end

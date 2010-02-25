@@ -67,11 +67,15 @@ module CurlyMustache
       end
       
       def find_many(ids, should_raise = false)
-        hashes = mget(ids_to_keys(ids))
+        hashes = connection.mget(ids_to_keys(ids))
         if should_raise and ids.length != hashes.length
           raise RecordNotFound, find_many_error_message(ids, hashes)
         else
-          ids.zip(hashes).collect{ |id, attributes| new.send(:read, :attributes => attributes) }
+          ids.zip(hashes).collect do |id, attributes|
+            record = new
+            record.send(:read, :attributes => record.send(:recv_attributes, attributes))
+            record
+          end
         end
       end
       
@@ -163,7 +167,7 @@ module CurlyMustache
           else
             _id, _key = id, key
           end
-          attributes = get(_key) || raise(RecordNotFound, "Couldn't find #{self.class.name} with ID=#{_id}")
+          attributes = recv_attributes(connection.get(_key)) || raise(RecordNotFound, "Couldn't find #{self.class.name} with ID=#{_id}")
           set_attributes(attributes)
         end
         
@@ -181,7 +185,7 @@ module CurlyMustache
       alias_method_chain :read, :callbacks
       
       def update
-        put(key, attributes)
+        connection.put(key, send_attributes(attributes))
         @new_record = false
         
         # ActiveModel::Dirty

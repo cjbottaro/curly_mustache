@@ -7,7 +7,7 @@ class AbstractAdapterTest < ActiveSupport::TestCase
   def test_not_implemented
     assert_raise(CurlyMustache::NotImplementedError){ BadAdapter.new(nil) }
     BadAdapter.class_eval do
-      def read_config(config); nil; end
+      def initialize(config); nil; end
     end
     adapter = BadAdapter.new(nil)
     assert_raise(CurlyMustache::NotImplementedError){ adapter.get(1) }

@@ -4,14 +4,13 @@ module CurlyMustache
   module Adapters
     class Cassandra < Abstract
       
-      def read_config(options)
-        options = options.symbolize_keys
-        @client = ::Cassandra.new(options[:keyspace], options[:server])
-        @column_family = options[:column_family] && options[:column_family].to_sym
+      def initialize(options)
+        @client = ::Cassandra.new(options[:keyspace], options[:servers])
+        @column_family = options[:column_family]
       end
       
       def column_family
-        @column_family || @class.name.pluralize.to_sym
+        @column_family || model_class.name.pluralize.to_sym
       end
       
       def put(key, value)

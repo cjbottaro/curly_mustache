@@ -1,4 +1,7 @@
 module CurlyMustache
+  # NOTE: The way this is implemented makes CurlyMustache not thread safe!
+  # 
+  # You are probably looking for {establish_connection}[link:/classes/CurlyMustache/Connection/ClassMethods.html#M000084].
   module Connection
     
     def self.included(mod)
@@ -11,40 +14,37 @@ module CurlyMustache
     
     module ClassMethods
       
+      # Establishes a connection using the adapter specified in <tt>config[:adapter]</tt>.
+      # If you call +establish_connection+ on CurlyMustache::Base, then all models will
+      # use that connection unless +establish_connection+ is called directly on a model class.
+      # Note that +config+ itself is passed to the adapter's constructor.
+      # 
+      # Ex:
+      #   CurlyMustache::Base.establish_connection(:adapter => :memcached, :servers => "localhost:11211")
       def establish_connection(config)
-        adapter_name = config[:adapter].to_s
-        require "adapters/#{adapter_name}"
-        adapter = "CurlyMustache::Adapters::#{adapter_name.camelize}".constantize.new(config)
-        self._connection = adapter
+        config = config.symbolize_keys
+        self._connection = Adapters.get(config[:adapter]).new(config)
       end
       
       def connection
-        _connection.set_class(self)
+        _connection.model_class = self
         _connection
-      end
-      
-      def get(key)
-        (value = connection.get(key)) and serializer.run_out(value)
-      end
-      
-      def put(key, value)
-        connection.put(key, serializer.run_in(value))
-      end
-      
-      def mget(keys)
-        connection.mget(keys).collect{ |value| serializer.run_out(value) }
       end
       
     end
     
     module InstanceMethods
       
-      def get(key); self.class.get(key); end
-      def put(key, value); self.class.put(key, value); end
-      def mget(keys); self.class.mget(keys); end
-      
       def connection
         self.class.connection
+      end
+      
+      def send_attributes(attributes)
+        attributes
+      end
+      
+      def recv_attributes(attributes)
+        attributes
       end
       
     end

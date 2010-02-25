@@ -1,6 +1,6 @@
 require "test_helper"
 
-unless [:cassandra].include?(CurlyMustache::Base.connection.adapter)
+unless [:cassandra].include?(CurlyMustache::Base.connection.adapter_name)
   require "curly_mustache/locking"
   CurlyMustache::Base.send(:include, CurlyMustache::Locking)
 end
